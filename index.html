@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CatClicker</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Pacifico', cursive, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95); border-radius: 20px; padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3); text-align: center; max-width: 600px; width: 100%;
+        }
+        h1 { color: #333; margin-bottom: 20px; font-size: 2em; }
+        .score { font-size: 2.5em; color: #667eea; margin: 20px 0; padding: 20px; background: #f0f0f0; border-radius: 10px; }
+        
+        .clicker-btn {
+            width: 200px; height: 200px; border: none; border-radius: 20px; cursor: pointer;
+            margin: 20px auto; display: block; transition: transform 0.1s;
+            background-size: cover; background-position: center; position: relative;
+            overflow: hidden; font-family: inherit;
+        }
+        .clicker-btn:active { transform: scale(0.95); }
+        .clicker-btn:hover { transform: scale(1.05); }
+
+        /* ЗАГЛУШКИ - заменятся на ваши картинки */
+        .img-placeholder { display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2em; }
+        .p1 { background: linear-gradient(45deg, #FF6B6B, #4ECDC4); }
+        .p2 { background: linear-gradient(45deg, #4ECDC4, #45B7D1); }
+        .p3 { background: linear-gradient(45deg, #96CEB4, #FFEAA7); }
+        .p4 { background: linear-gradient(45deg, #DDA0DD, #98D8C8); }
+
+        .shop { margin-top: 30px; padding-top: 30px; border-top: 3px solid #FF8300; }
+        .shop h2 { color: #FF8300; margin-bottom: 20px; font-size: 1.8em; }
+        .btn {
+            background: #000; color: #fff; border: none; padding: 15px 40px; font-size: 1.3em;
+            border-radius: 10px; cursor: pointer; margin: 10px; font-family: inherit; transition: all 0.3s;
+        }
+        .btn:hover:not(:disabled) { background: #333; transform: translateY(-2px); }
+        .btn:disabled { background: #666; cursor: not-allowed; opacity: 0.6; }
+        .hidden { display: none !important; }
+        .power-info { margin-top: 10px; color: #666; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐱 CatClicker 🐱</h1>
+        <div class="score" id="scoreText">кол-во очков: 0</div>
+        
+        <!-- КЛИКЕР -->
+        <button class="clicker-btn img-placeholder p1" id="clickerBtn" type="button" onclick="handleClick()">КЛИКНИ!</button>
+        <div class="power-info">Сила клика: <span id="powerValue">1</span></div>
+
+        <div class="shop">
+            <h2>🛒 магазин:</h2>
+            <button class="btn" id="buyBtn" type="button" onclick="buyUpgrade()">купить 25</button><br>
+            <button class="btn" id="skinBtn" type="button" onclick="buySkin()">купить скин 125</button>
+        </div>
+    </div>
+
+    <script>
+        // ПЕРЕМЕННЫЕ
+        let p = 0, clickerPower = 1, price = 25, skin = false, turn = 1;
+
+        const scoreText = document.getElementById('scoreText');
+        const clickerBtn = document.getElementById('clickerBtn');
+        const buyBtn = document.getElementById('buyBtn');
+        const skinBtn = document.getElementById('skinBtn');
+        const powerValueEl = document.getElementById('powerValue');
+
+        // СООТВЕТСТВИЕ КЛАССОВ ИЗОБРАЖЕНИЯМ
+        const imageClasses = {
+            default: 'p1',  // 67.png
+            alt1: 'p2',     // cot.png
+            skin1: 'p3',    // tito.png
+            skin2: 'p4'     // tot.png
+        };
+
+        // ГЛАВНАЯ ФУНКЦИЯ КЛИКА (имя изменено, чтобы не конфликтовать с браузером)
+        function handleClick() {
+            p += clickerPower;
+            updateScore();
+            
+            if (turn === 1 && !skin) { setImg('alt1'); turn = 2; }
+            else if (turn === 2 && !skin) { setImg('default'); turn = 1; }
+            else if (turn === 1 && skin) { setImg('skin1'); turn = 2; }
+            else if (turn === 2 && skin) { setImg('skin2'); turn = 1; }
+            
+            update();
+        }
+
+        function setImg(key) {
+            clickerBtn.className = `clicker-btn img-placeholder ${imageClasses[key]}`;
+        }
+
+        function buyUpgrade() {
+            if (p >= price) {
+                p -= price;
+                clickerPower++;
+                price = Math.floor(price * 1.5);
+                updateScore();
+                update();
+            }
+        }
+
+        function buySkin() {
+            if (p >= 125) {
+                p -= 125;
+                skin = true;
+                setImg('skin1');
+                skinBtn.classList.add('hidden');
+                updateScore();
+                update();
+            }
+        }
+
+        function updateScore() {
+            scoreText.textContent = `кол-во очков: ${p}`;
+            powerValueEl.textContent = clickerPower;
+        }
+
+        function update() {
+            if (p >= price) {
+                buyBtn.disabled = false;
+                buyBtn.textContent = `купить ${price}`;
+            } else {
+                buyBtn.disabled = true;
+                buyBtn.textContent = `нужно ${price}`;
+            }
+        }
+        update();
+    </script>
+</body>
+</html>
