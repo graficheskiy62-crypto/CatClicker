@@ -28,11 +28,11 @@
         .clicker-btn:active { transform: scale(0.95); }
         .clicker-btn:hover { transform: scale(1.05); }
 
-        /* ✅ ИСПРАВЛЕНО: background-image + сохранение размера/позиции */
-        .p1 { background-image: url('https://cdn.jsdelivr.net/gh/graficheskiy62-crypto/CatClicker@main/cot.png'); background-size: cover; background-position: center; }
-        .p2 { background-image: url('https://cdn.jsdelivr.net/gh/graficheskiy62-crypto/CatClicker@main/tito.png'); background-size: cover; background-position: center; }
-        .p3 { background-image: url('https://cdn.jsdelivr.net/gh/graficheskiy62-crypto/CatClicker@main/tot.png'); background-size: cover; background-position: center; }
-        .p4 { background-image: url('https://cdn.jsdelivr.net/gh/graficheskiy62-crypto/CatClicker@main/rt.jpg'); background-size: cover; background-position: center; }
+        /* ✅ ОТНОСИТЕЛЬНЫЕ ПУТИ - работают с GitHub Pages */
+        .p1 { background-image: url('cot.png'); }
+        .p2 { background-image: url('tito.png'); }
+        .p3 { background-image: url('tot.png'); }
+        .p4 { background-image: url('rt.jpg'); }
 
         .shop { margin-top: 30px; padding-top: 30px; border-top: 3px solid #FF8300; }
         .shop h2 { color: #FF8300; margin-bottom: 20px; font-size: 1.8em; }
@@ -51,10 +51,8 @@
         <h1>🐱 CatClicker 🐱</h1>
         <div class="score" id="scoreText">кол-во очков: 0</div>
         
-        <!-- КЛИКЕР: начальная картинка 67.png -->
-        <button class="clicker-btn p1" id="clickerBtn" type="button" onclick="handleClick()" 
-                style="background-image: url('https://cdn.jsdelivr.net/gh/graficheskiy62-crypto/CatClicker@main/67.png'); background-size: cover; background-position: center;">
-        </button>
+        <!-- КЛИКЕР -->
+        <button class="clicker-btn p1" id="clickerBtn" type="button" onclick="handleClick()"></button>
         <div class="power-info">Сила клика: <span id="powerValue">1</span></div>
 
         <div class="shop">
@@ -90,7 +88,6 @@
         }
 
         function setImg(key) {
-            // ✅ Сохраняем inline-style с background-image, меняем только класс
             clickerBtn.className = `clicker-btn ${imageClasses[key]}`;
         }
 
