@@ -9,7 +9,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Pacifico', cursive, sans-serif;
-            background: url('https://raw.githubusercontent.com/graficheskiy62-crypto/CatClicker/main/67.png');
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px;
         }
         .container {
@@ -28,12 +28,11 @@
         .clicker-btn:active { transform: scale(0.95); }
         .clicker-btn:hover { transform: scale(1.05); }
 
-        /* ЗАГЛУШКИ - заменятся на ваши картинки */
-        .img-placeholder { display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2em; }
-        .p1 { background: url('https://raw.githubusercontent.com/graficheskiy62-crypto/CatClicker/main/cot.png'); }
-        .p2 { background:  url('https://raw.githubusercontent.com/graficheskiy62-crypto/CatClicker/main/tito.png'); }
-        .p3 { background:  url('https://raw.githubusercontent.com/graficheskiy62-crypto/CatClicker/main/tot.png'); }
-        .p4 { background:  url('https://raw.githubusercontent.com/graficheskiy62-crypto/CatClicker/main/rt.jpg'); }
+        /* ✅ ИСПРАВЛЕНО: background-image + сохранение размера/позиции */
+        .p1 { background-image: url('https://cdn.jsdelivr.net/gh/graficheskiy62-crypto/CatClicker@main/cot.png'); background-size: cover; background-position: center; }
+        .p2 { background-image: url('https://cdn.jsdelivr.net/gh/graficheskiy62-crypto/CatClicker@main/tito.png'); background-size: cover; background-position: center; }
+        .p3 { background-image: url('https://cdn.jsdelivr.net/gh/graficheskiy62-crypto/CatClicker@main/tot.png'); background-size: cover; background-position: center; }
+        .p4 { background-image: url('https://cdn.jsdelivr.net/gh/graficheskiy62-crypto/CatClicker@main/rt.jpg'); background-size: cover; background-position: center; }
 
         .shop { margin-top: 30px; padding-top: 30px; border-top: 3px solid #FF8300; }
         .shop h2 { color: #FF8300; margin-bottom: 20px; font-size: 1.8em; }
@@ -52,8 +51,10 @@
         <h1>🐱 CatClicker 🐱</h1>
         <div class="score" id="scoreText">кол-во очков: 0</div>
         
-        <!-- КЛИКЕР -->
-        <button class="clicker-btn img-placeholder p1" id="clickerBtn" type="button" onclick="handleClick()">КЛИКНИ!</button>
+        <!-- КЛИКЕР: начальная картинка 67.png -->
+        <button class="clicker-btn p1" id="clickerBtn" type="button" onclick="handleClick()" 
+                style="background-image: url('https://cdn.jsdelivr.net/gh/graficheskiy62-crypto/CatClicker@main/67.png'); background-size: cover; background-position: center;">
+        </button>
         <div class="power-info">Сила клика: <span id="powerValue">1</span></div>
 
         <div class="shop">
@@ -64,58 +65,46 @@
     </div>
 
     <script>
-        // ПЕРЕМЕННЫЕ
         let p = 0, clickerPower = 1, price = 25, skin = false, turn = 1;
-
         const scoreText = document.getElementById('scoreText');
         const clickerBtn = document.getElementById('clickerBtn');
         const buyBtn = document.getElementById('buyBtn');
         const skinBtn = document.getElementById('skinBtn');
         const powerValueEl = document.getElementById('powerValue');
 
-        // СООТВЕТСТВИЕ КЛАССОВ ИЗОБРАЖЕНИЯМ
         const imageClasses = {
-            default: 'p1',  // 67.png
-            alt1: 'p2',     // cot.png
-            skin1: 'p3',    // tito.png
-            skin2: 'p4'     // tot.png
+            default: 'p1',  // cot.png
+            alt1: 'p2',     // tito.png
+            skin1: 'p3',    // tot.png
+            skin2: 'p4'     // rt.jpg
         };
 
-        // ГЛАВНАЯ ФУНКЦИЯ КЛИКА (имя изменено, чтобы не конфликтовать с браузером)
         function handleClick() {
             p += clickerPower;
             updateScore();
-            
             if (turn === 1 && !skin) { setImg('alt1'); turn = 2; }
             else if (turn === 2 && !skin) { setImg('default'); turn = 1; }
             else if (turn === 1 && skin) { setImg('skin1'); turn = 2; }
             else if (turn === 2 && skin) { setImg('skin2'); turn = 1; }
-            
             update();
         }
 
         function setImg(key) {
-            clickerBtn.className = `clicker-btn img-placeholder ${imageClasses[key]}`;
+            // ✅ Сохраняем inline-style с background-image, меняем только класс
+            clickerBtn.className = `clicker-btn ${imageClasses[key]}`;
         }
 
         function buyUpgrade() {
             if (p >= price) {
-                p -= price;
-                clickerPower++;
-                price = Math.floor(price * 1.5);
-                updateScore();
-                update();
+                p -= price; clickerPower++; price = Math.floor(price * 1.5);
+                updateScore(); update();
             }
         }
 
         function buySkin() {
             if (p >= 125) {
-                p -= 125;
-                skin = true;
-                setImg('skin1');
-                skinBtn.classList.add('hidden');
-                updateScore();
-                update();
+                p -= 125; skin = true; setImg('skin1');
+                skinBtn.classList.add('hidden'); updateScore(); update();
             }
         }
 
@@ -125,13 +114,8 @@
         }
 
         function update() {
-            if (p >= price) {
-                buyBtn.disabled = false;
-                buyBtn.textContent = `купить ${price}`;
-            } else {
-                buyBtn.disabled = true;
-                buyBtn.textContent = `нужно ${price}`;
-            }
+            buyBtn.disabled = p < price;
+            buyBtn.textContent = p >= price ? `купить ${price}` : `нужно ${price}`;
         }
         update();
     </script>
